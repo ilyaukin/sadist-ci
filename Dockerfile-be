@@ -1,0 +1,9 @@
+FROM yakim/docker-and-compose
+
+WORKDIR /build
+
+COPY sadist-be /build
+COPY deploy.sh /build
+
+CMD [ "/build/deploy.sh" ]
+

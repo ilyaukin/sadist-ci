@@ -1,0 +1,32 @@
+version: '3'
+services:
+
+  fe:
+    image: build-fe
+    build:
+      context: .
+      dockerfile: Dockerfile-fe
+    volumes:
+      - static:/build/dist
+
+  be:
+    image: build-be
+    build:
+      context: .
+      dockerfile: Dockerfile-be
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - static:/static
+    environment:
+      - CA
+      - CLIENT_CERT
+      - CLIENT_KEY
+      - DOCKER_TLS_VERIFY
+      - DOCKER_HOST
+      - DOCKER_MACHINE_NAME
+      - DATABASE_URL
+    depends_on:
+      - fe
+
+volumes:
+  static:
