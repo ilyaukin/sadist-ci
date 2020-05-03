@@ -1,0 +1,53 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out sadist-ci under $GITHUB_WORKSPACE
+    - uses: actions/checkout@v2
+
+    # Checks-out sadist-fe & sadist-be inside sadist-ci
+    - uses: actions/checkout@v2
+      with:
+        repository: ilyaukin/sadist-fe
+        token: ${{ secrets.ACCESS_TOKEN }}
+        path: sadist-ci
+    - uses: actions/checkout@v2
+      with:
+        repository: ilyaukin/sadist-be
+        token: ${{ secrets.ACCESS_TOKEN }}
+        path: sadist-ci
+
+    # Runs docker-compose build
+    - name: Run build
+      env:
+        CA: ${{ secrets.CA }}
+        CLIENT_CERT: ${{ secrets.CLIENT_CERT }}
+        CLIENT_KEY: ${{ secrets.CLIENT_KEY }}
+        DOCKER_TLS_VERIFY: 1
+        DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
+        DOCKER_MACHINE_NAME: my-handicapped-pet
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      run: |
+        export DOCKER_CERT_PATH=$HOME/.cert
+        mkdir $DOCKER_CERT_PATH
+        echo "$CA" > $DOCKER_CERT_PATH/ca.pem
+        echo "$CLIENT_CERT" > $DOCKER_CERT_PATH/cert.pem
+        echo "$CLIENT_KEY" > $DOCKER_CERT_PATH/key.pem
+        docker-compose up --build
+        rm -rf $DOCKER_CERT_PATH
+
