@@ -25,12 +25,12 @@ jobs:
       with:
         repository: ilyaukin/sadist-fe
         token: ${{ secrets.ACCESS_TOKEN }}
-        path: sadist-ci
+        path: sadist-fe
     - uses: actions/checkout@v2
       with:
         repository: ilyaukin/sadist-be
         token: ${{ secrets.ACCESS_TOKEN }}
-        path: sadist-ci
+        path: sadist-be
 
     # Runs docker-compose build
     - name: Run build
