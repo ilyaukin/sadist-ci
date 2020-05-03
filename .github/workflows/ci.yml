@@ -49,6 +49,5 @@ jobs:
         echo -e "$CLIENT_CERT" > $DOCKER_CERT_PATH/cert.pem
         echo -e "$CLIENT_KEY" > $DOCKER_CERT_PATH/key.pem
         docker-compose up --build
-        rm -rf $DOCKER_CERT_PATH
         docker-compose ps -q | (while read line; do code=$(docker inspect $line --format '{{.State.ExitCode}}'); if [ $code != "0" ]; then exit $code; fi; done)
 
