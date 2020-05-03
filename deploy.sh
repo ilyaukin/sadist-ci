@@ -2,6 +2,8 @@
 
 set -e
 
+exit 111
+
 mkdir app/static
 cp -r /static/*.js /static/img app/static
 
