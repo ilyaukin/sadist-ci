@@ -1,0 +1,21 @@
+FROM node
+
+WORKDIR /build-fe
+
+COPY sadist-fe/package.json sadist-fe/npm-shrinkwrap.json ./
+RUN npm i
+COPY sadist-fe .
+RUN npm run build
+
+
+FROM yakim/docker-and-compose
+
+WORKDIR /build
+
+COPY sadist-be .
+RUN mkdir app/static
+COPY --from=0 /build-fe/dist app/static
+COPY deploy.sh .
+
+CMD [ "/build/deploy.sh" ]
+
