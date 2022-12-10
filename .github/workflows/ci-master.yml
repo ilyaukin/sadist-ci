@@ -1,0 +1,78 @@
+# This is a workflow for building and deploying prod and merge to master on manual trigger
+
+name: Check-in master
+
+# Controls when the action will run. Triggers the workflow manually
+on:
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out sadist-ci under $GITHUB_WORKSPACE
+    - uses: actions/checkout@v2
+      with:
+        ref: develop
+
+    # Checks-out sadist-fe & sadist-be inside sadist-ci
+    - uses: actions/checkout@v2
+      with:
+        repository: ilyaukin/sadist-fe
+        token: ${{ secrets.ACCESS_TOKEN }}
+        path: sadist-fe
+        ref: develop
+    - uses: actions/checkout@v2
+      with:
+        repository: ilyaukin/sadist-be
+        token: ${{ secrets.ACCESS_TOKEN }}
+        path: sadist-be
+        ref: develop
+
+    # Shuts down staging
+    - name: Shut down staging
+      run: |
+        cd sadist-be
+        export COMPOSE_PROJECT_NAME=staging
+        docker-compose down
+        unset COMPOSE_PROJECT_NAME
+        cd ..
+
+    # Runs docker-compose build
+    - uses: ./.github/actions/run-build
+      with:
+        env: prod
+
+    # Merges develop to master
+    - uses: bambamboole/gha-upmerge@master
+      with:
+        stable_branch: master
+        development_branch: develop
+      env:
+        GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+    # Merges develop to master in sadist-be
+    - uses: informaticsmatters/trigger-ci-action@v1
+      with:
+        ci-owner: ilyaikin
+        ci-repository: sadist-be
+        ci-ref: refs/heads/develop
+        ci-user: ilyaukin
+        ci-user-token: ${{ secrets.ACCESS_TOKEN }}
+        ci-name: Check-in master
+
+    # Merges develop to master in sadist-fe
+    - uses: informaticsmatters/trigger-ci-action@v1
+      with:
+        ci-owner: ilyaikin
+        ci-repository: sadist-fe
+        ci-ref: refs/heads/develop
+        ci-user: ilyaukin
+        ci-user-token: ${{ secrets.ACCESS_TOKEN }}
+        ci-name: Check-in master
+
