@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
 
   steps:
-    - uses: ./.github/actions/copy-cert
-      with:
-        ca: ${{ secrets.CA }}
-        client_cert: ${{ secrets.CLIENT_CERT }}
-        client_key: ${{ secrets.CLIENT_KEY }}
+  - uses: ./.github/actions/copy-cert
+    with:
+      ca: ${{ secrets.CA }}
+      client_cert: ${{ secrets.CLIENT_CERT }}
+      client_key: ${{ secrets.CLIENT_KEY }}
 
-    - run: |
-        echo docker cert path is $DOCKER_CERT_PATH
-      
+  - run: |
+      echo docker cert path is $DOCKER_CERT_PATH
+    
