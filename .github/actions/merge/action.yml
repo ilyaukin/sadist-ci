@@ -28,7 +28,7 @@ runs:
       run: |
         set -x
         cd ${{ inputs.workspace }}
-#        git remote add origin "https://x-access-token:${{ inputs.token }}}/${{ inputs.repo }}.git"
+        # git remote add origin "https://x-access-token:${{ inputs.token }}}/${{ inputs.repo }}.git"
         git config --global user.name '${GITHUB_ACTOR}'
         git config --global user.email 'noreply@github.com' 
         git fetch  origin ${{ inputs.to }}:${{ inputs.to }}
