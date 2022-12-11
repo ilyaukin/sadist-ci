@@ -22,3 +22,6 @@ runs:
         echo -e "${{ inputs.client_cert }}" > $DOCKER_CERT_PATH/cert.pem
         echo -e "${{ inputs.client_key }}" > $DOCKER_CERT_PATH/key.pem
         echo "DOCKER_CERT_PATH=$DOCKER_CERT_PATH" >> $GITHUB_ENV
+        echo "CA=${{ inputs.ca }}" >> $GITHUB_ENV
+        echo "CLIENT_CERT=${{ inputs.client_cert }}" >> $GITHUB_ENV
+        echo "CLIENT_KEY=${{ inputs.client_key }}" >> $GITHUB_ENV
