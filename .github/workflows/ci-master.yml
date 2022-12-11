@@ -63,30 +63,27 @@ jobs:
         env: prod
 
     # Merges develop to master
-    - uses: bambamboole/gha-upmerge@master
+    - uses: ./.github/actions/merge
       with:
-        stable_branch: master
-        development_branch: develop
-      env:
-        GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        from: develop
+        to: master
+        token: ${{ secrets.ACCESS_TOKEN }}
 
     # Merges develop to master in sadist-be
-    - uses: informaticsmatters/trigger-ci-action@v1
+    - uses: ./.github/actions/merge
       with:
-        ci-owner: ilyaikin
-        ci-repository: sadist-be
-        ci-ref: refs/heads/develop
-        ci-user: ilyaukin
-        ci-user-token: ${{ secrets.ACCESS_TOKEN }}
-        ci-name: Check-in master
+        workspace: sadist-be
+        repo: ilyaukin/sadist-be
+        from: develop
+        to: master
+        token: ${{ secrets.ACCESS_TOKEN }}
 
     # Merges develop to master in sadist-fe
-    - uses: informaticsmatters/trigger-ci-action@v1
+    - uses: ./.github/actions/merge
       with:
-        ci-owner: ilyaikin
-        ci-repository: sadist-fe
-        ci-ref: refs/heads/develop
-        ci-user: ilyaukin
-        ci-user-token: ${{ secrets.ACCESS_TOKEN }}
-        ci-name: Check-in master
+        workspace: sadist-fe
+        repo: ilyaukin/sadist-fe
+        from: develop
+        to: master
+        token: ${{ secrets.ACCESS_TOKEN }}
 

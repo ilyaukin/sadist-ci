@@ -1,0 +1,36 @@
+name: Merge branch
+description: Merge one branch to another and push changes
+inputs:
+  workspace:
+    description: path to workspace where the repo is checked out
+    required: false
+    default: .
+  repo:
+    description: repository owner and name
+    required: false
+    default: ${GITHUB_REPOSITORY}
+  from:
+    description: the branch which to merge from
+    required: false
+    default: develop
+  to:
+    description: the branch which to merge to
+    required: false
+    default: master
+  token:
+    description: access token to the repo
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        cd ${{ inputs.workspace }}
+        git remote add origin ${GITHUB_SERVER_URL/https:\/\//https:\/\/x-access-token:${{ inputs.token }}}/${{ inputs.repo }}.git
+        git config --global user.name '${GITHUB_ACTOR}'
+        git config --global user.email 'noreply@github.com' 
+        git fetch  origin ${{ inputs.to }}:${{ inputs.to }}
+        git switch --discard-changes ${{ inputs.to }}
+        git merge ${{ inputs.from }} -m 'Merge ${{ inputs.from }} to ${{ inputs.to }}'
+        git push origin ${{ inputs.to }}
