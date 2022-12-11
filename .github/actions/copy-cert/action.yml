@@ -1,0 +1,24 @@
+name: Copy docker certs
+description: Copy docker cert files to the executioner machine
+inputs:
+  ca:
+    description: authority certificate
+    required: true
+  client_cert:
+    description: client certificate
+    required: true
+  client_key:
+    description: client key
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        export DOCKER_CERT_PATH=$HOME/.cert
+        mkdir $DOCKER_CERT_PATH
+        echo -e "${{ inputs.ca }}" > $DOCKER_CERT_PATH/ca.pem
+        echo -e "${{ inputs.client_cert }}" > $DOCKER_CERT_PATH/cert.pem
+        echo -e "${{ inputs.client_key }}" > $DOCKER_CERT_PATH/key.pem
+        echo "DOCKER_CERT_PATH=$DOCKER_CERT_PATH" >> $GITHUB_ENV
