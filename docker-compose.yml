@@ -8,10 +8,9 @@ services:
       dockerfile: Dockerfile-deploy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKER_CERT_PATH}:/cert
     environment:
-      - CA
-      - CLIENT_CERT
-      - CLIENT_KEY
+      - DOCKER_CERT_PATH=/cert
       - DOCKER_TLS_VERIFY
       - DOCKER_HOST
       - DOCKER_MACHINE_NAME
