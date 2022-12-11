@@ -34,11 +34,13 @@ jobs:
         repository: ilyaukin/sadist-fe
         token: ${{ secrets.ACCESS_TOKEN }}
         path: sadist-fe
+        ref: develop
     - uses: actions/checkout@v2
       with:
         repository: ilyaukin/sadist-be
         token: ${{ secrets.ACCESS_TOKEN }}
         path: sadist-be
+        ref: develop
 
     # Sets up docker certificates
     - uses: ./.github/actions/copy-cert
