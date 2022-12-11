@@ -27,6 +27,11 @@ jobs:
     steps:
     # Checks-out sadist-ci under $GITHUB_WORKSPACE
     - uses: actions/checkout@v2
+      with:
+        repository: ilyaukin/sadist-ci
+        token: ${{ secrets.ACCESS_TOKEN }}
+        path: .
+        ref: develop
 
     # Checks-out sadist-fe & sadist-be inside sadist-ci
     - uses: actions/checkout@v2
