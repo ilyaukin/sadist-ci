@@ -21,4 +21,4 @@ runs:
         echo -e "${{ inputs.ca }}" > $DOCKER_CERT_PATH/ca.pem
         echo -e "${{ inputs.client_cert }}" > $DOCKER_CERT_PATH/cert.pem
         echo -e "${{ inputs.client_key }}" > $DOCKER_CERT_PATH/key.pem
-
+        echo "::set-env name=DOCKER_CERT_PATH::$DOCKER_CERT_PATH"
