@@ -13,6 +13,13 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # Environment common for all steps
+    env:
+      DOCKER_TLS_VERIFY: 1
+      DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
+      DOCKER_MACHINE_NAME: my-handicapped-pet
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out sadist-ci under $GITHUB_WORKSPACE
@@ -33,6 +40,13 @@ jobs:
         token: ${{ secrets.ACCESS_TOKEN }}
         path: sadist-be
         ref: develop
+
+    # Sets up docker certificates
+    - uses: ./.github/actions/copy-cert
+      with:
+        ca: ${{ secrets.CA }}
+        client_cert: ${{ secrets.CLIENT_CERT }}
+        client_key: ${{ secrets.CLIENT_KEY }}
 
     # Shuts down staging
     - name: Shut down staging
