@@ -33,5 +33,6 @@ runs:
         git config --global user.email 'noreply@github.com' 
         git fetch  origin ${{ inputs.to }}:${{ inputs.to }}
         git switch --discard-changes ${{ inputs.to }}
+        git fetch  origin ${{ inputs.from }}:${{ inputs.from }}
         git merge ${{ inputs.from }} -m 'Merge ${{ inputs.from }} to ${{ inputs.to }}'
         git push origin ${{ inputs.to }}
