@@ -25,7 +25,7 @@ runs:
         set -x
         mkdir tmpdir
         cd tmpdir
-        git clone https://x-access-token:"${{ inputs.token }}"/github.com/${{ inputs.repo }}.git .
+        git clone https://ilyaukin:"${{ inputs.token }}"@github.com/${{ inputs.repo }}.git .
         git config --local user.name '${GITHUB_ACTOR}'
         git config --local user.email 'noreply@github.com' 
         git checkout ${{ inputs.to }}
