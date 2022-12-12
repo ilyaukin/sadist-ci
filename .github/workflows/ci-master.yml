@@ -72,7 +72,6 @@ jobs:
     # Merges develop to master in sadist-be
     - uses: ./.github/actions/merge
       with:
-        workspace: sadist-be
         repo: ilyaukin/sadist-be
         from: develop
         to: master
@@ -81,7 +80,6 @@ jobs:
     # Merges develop to master in sadist-fe
     - uses: ./.github/actions/merge
       with:
-        workspace: sadist-fe
         repo: ilyaukin/sadist-fe
         from: develop
         to: master

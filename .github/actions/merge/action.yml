@@ -1,10 +1,6 @@
 name: Merge branch
 description: Merge one branch to another and push changes
 inputs:
-  workspace:
-    description: path to workspace where the repo is checked out
-    required: false
-    default: .
   repo:
     description: repository owner and name
     required: false
@@ -27,12 +23,14 @@ runs:
     - shell: bash
       run: |
         set -x
-        cd ${{ inputs.workspace }}
-        # git remote add origin "https://x-access-token:${{ inputs.token }}}/${{ inputs.repo }}.git"
-        git config --global user.name '${GITHUB_ACTOR}'
-        git config --global user.email 'noreply@github.com' 
-        git fetch  origin ${{ inputs.to }}:${{ inputs.to }}
-        git switch --discard-changes ${{ inputs.to }}
-        git fetch  origin ${{ inputs.from }}:${{ inputs.from }}
+        mkdir tmpdir
+        cd tmpdir
+        git clone "https://x-access-token:${{ inputs.token }}/${{ inputs.repo }}.git" .
+        git config --local user.name '${GITHUB_ACTOR}'
+        git config --local user.email 'noreply@github.com' 
+        git checkout ${{ inputs.to }}
+        git fetch origin ${{ inputs.from }}:${{ inputs.from }}
         git merge ${{ inputs.from }} -m 'Merge ${{ inputs.from }} to ${{ inputs.to }}'
         git push origin ${{ inputs.to }}
+        cd ..
+        rm -rf tmpdir
