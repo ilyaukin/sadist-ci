@@ -1,3 +1,3 @@
 # Continuous integration
 
-![flow](flow.svg)
+![flow](img/flow.drawio.png)
