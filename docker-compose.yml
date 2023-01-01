@@ -16,4 +16,5 @@ services:
       - DOCKER_HOST
       - DOCKER_MACHINE_NAME
       - DATABASE_URL
+      - FLASK_SECRET_KEY
       - ENV
