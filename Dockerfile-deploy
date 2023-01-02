@@ -2,7 +2,7 @@ FROM node:16
 
 WORKDIR /build-fe
 
-COPY sadist-fe/package.json sadist-fe/npm-shrinkwrap.json ./
+COPY sadist-fe/package.json sadist-fe/package-lock.json ./
 RUN npm i
 COPY sadist-fe .
 RUN npm run build
