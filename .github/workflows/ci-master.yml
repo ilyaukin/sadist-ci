@@ -19,7 +19,6 @@ jobs:
       DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
       DOCKER_MACHINE_NAME: my-handicapped-pet
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      FLASK_SECRET_KEY: ${{ secrets.FLASK_SECRET_KEY }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
