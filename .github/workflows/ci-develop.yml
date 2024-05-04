@@ -21,7 +21,7 @@ jobs:
       DOCKER_TLS_VERIFY: 1
       DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
       DOCKER_MACHINE_NAME: my-handicapped-pet
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
