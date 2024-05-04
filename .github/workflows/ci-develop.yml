@@ -46,6 +46,12 @@ jobs:
         token: ${{ secrets.ACCESS_TOKEN }}
         path: sadist-be
         ref: develop
+    - uses: actions/checkout@v2
+      with:
+        repository: ilyaukin/sadist-proxy
+        token: ${{ secrets.ACCESS_TOKEN }}
+        path: sadist-proxy
+        ref: develop
 
     # Sets up docker certificates
     - uses: ./.github/actions/copy-cert
