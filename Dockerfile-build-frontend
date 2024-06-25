@@ -1,0 +1,7 @@
+FROM node:22-alpine
+
+VOLUME /sadist-fe
+WORKDIR /sadist-fe
+
+ENTRYPOINT ["sh", "-c"]
+CMD ["npm i && npm run build"]

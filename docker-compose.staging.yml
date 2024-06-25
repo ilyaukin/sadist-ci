@@ -1,0 +1,17 @@
+version: '3'
+services:
+
+  nginx:
+    ports:
+      - 8080:80
+      - 8043:443
+    volumes:
+      - prod_certbot_www:/var/www/certbot/
+      - prod_ssl_certs:/etc/letsencrypt/
+
+volumes:
+  prod_certbot_www:
+    external: true
+  prod_ssl_certs:
+    external: true
+

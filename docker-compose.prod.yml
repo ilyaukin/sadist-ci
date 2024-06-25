@@ -1,0 +1,31 @@
+version: '3'
+services:
+
+  nginx:
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - certbot_www:/var/www/certbot/
+      - ssl_certs:/etc/letsencrypt/
+
+  certbot:
+    image: myhandicappedpet/certbot
+    restart: "unless-stopped"
+    volumes:
+      - certbot_www:/var/www/certbot/
+      - ssl_certs:/etc/letsencrypt/
+
+  pypi:
+    image: zzzsochi/devpi
+    restart: unless-stopped
+    ports:
+      - 3141:3141
+    volumes:
+      - devpi:/srv/devpi
+
+volumes:
+  certbot_www:
+  ssl_certs:
+  devpi:
+
