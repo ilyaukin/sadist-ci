@@ -100,7 +100,7 @@ resource "aws_security_group" "my-handicapped-security-group" {
 
 module "aws-iam-role-for-ecr" {
   source      = "./modules/aws-iam-role"
-  action_list = ["ecr:GetAuthorizationToken", "ecr:BatchGetImage", "ecr:GetDownloadUrlForLayer"]
+  action_list = ["ecr:*"]
   name        = "ec2-role-my-handicapped-pet"
 }
 
@@ -151,12 +151,21 @@ sudo usermod -a -G docker ec2-user
 #  name = "my-handicapped-pet/${var.env}"
 #}
 
+# check out all needed sources
+module "git-checkout" {
+  for_each = toset(flatten([for k in var.image_list : local.config[k]["repo"]]))
+  source   = "./modules/git-checkout"
+  repo     = "${each.value}"
+}
+
 # build dokcer images
 # for all the requested services
 module "docker-image" {
-  for_each = toset(var.image_list)
-  source   = "./modules/docker-image"
-  name     = each.value
+  depends_on = [module.git-checkout]
+  for_each   = zipmap(var.image_list, [for k in var.image_list : local.config[k]["dockerfile"]])
+  source     = "./modules/docker-image"
+  name       = each.key
+  dockerfile = each.value
 }
 
 # execute remotely docker-compose to bring all services up

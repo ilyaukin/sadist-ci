@@ -1,14 +1,15 @@
 #!/bin/bash
 
 set -x
+if [ -z $DOCKER_ACCESS_TOKEN ]; then
+  echo "DOCKER_ACCESS_TOKEN must be set" >&2
+  exit 1
+fi
 dockerfile=$1
 path=$(dirname $dockerfile)
-repo=$2
-image=$3
-tag=${4:-latest}
+image=$2
+tag=latest
 docker build -f $dockerfile -t $image $path
-region=$(echo "$repo" | cut "-d." -f4)
-host=$(echo "$repo" | cut "-d/" -f1)
-aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin $host
-docker tag $image $repo:$tag
-docker push $repo:$tag
+echo $DOCKER_ACCESS_TOKEN | docker login -u myhandicappedpet --password-stdin
+docker tag $image $image:$tag
+docker push $image:$tag
