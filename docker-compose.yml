@@ -41,7 +41,7 @@ services:
       - uploads:${UPLOAD_FOLDER}
 
   mysql:
-    image: "mysql:latest"
+    image: "mysql:8.0.33"
     restart: unless-stopped
     command: "--default-authentication-plugin=mysql_native_password"
     env_file: ".env"
