@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -e
+set -x
+
+docker run -i -e DATABASE_URL myhandicappedpet/webapp-flask python -m scripts.apply_migrations
 
 export COMPOSE_PROJECT_NAME=$ENV
 docker compose -f docker-compose.yml -f docker-compose."$ENV".yml down
