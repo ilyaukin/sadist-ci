@@ -5,6 +5,11 @@ terraform {
       version = "~> 5.54"
     }
   }
+  backend "s3" {
+    bucket = "my-handicapped-bucket"
+    key    = "terraform/state"
+    region = "us-west-2"
+  }
 }
 provider "aws" {
   region = var.region
