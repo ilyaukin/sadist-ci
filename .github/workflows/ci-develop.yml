@@ -8,6 +8,11 @@ on:
   push:
     branches: [ develop ]
   workflow_call:
+    inputs:
+      image_list:
+        description: List of dokcer images to rebuild (JSON-serialized)
+        type: string
+        default: '[]'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -18,49 +23,30 @@ jobs:
 
     # Environment common for all steps
     env:
-      DOCKER_TLS_VERIFY: 1
-      DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
-      DOCKER_MACHINE_NAME: my-handicapped-pet
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
       DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out sadist-ci under $GITHUB_WORKSPACE
     - uses: actions/checkout@v2
-      with:
-        repository: ilyaukin/sadist-ci
-        token: ${{ secrets.ACCESS_TOKEN }}
-        path: .
-        ref: develop
-
-    # Checks-out sadist-fe & sadist-be inside sadist-ci
-    - uses: actions/checkout@v2
-      with:
-        repository: ilyaukin/sadist-fe
-        token: ${{ secrets.ACCESS_TOKEN }}
-        path: sadist-fe
-        ref: develop
-    - uses: actions/checkout@v2
-      with:
-        repository: ilyaukin/sadist-be
-        token: ${{ secrets.ACCESS_TOKEN }}
-        path: sadist-be
-        ref: develop
-    - uses: actions/checkout@v2
-      with:
-        repository: ilyaukin/sadist-proxy
-        token: ${{ secrets.ACCESS_TOKEN }}
-        path: sadist-proxy
-        ref: develop
 
     # Sets up docker certificates
-    - uses: ./.github/actions/copy-cert
-      with:
-        ca: ${{ secrets.CA }}
-        client_cert: ${{ secrets.CLIENT_CERT }}
-        client_key: ${{ secrets.CLIENT_KEY }}
+    - name: Dump secrets
+      run: |
+        echo -e "${{ secrets.AWS_SSH_KEY }}" > aws_my_handicapped_pet
+        echo -e "${{ secrets.AWS_SSH_KEY_PUB }}" > aws_my_handicapped_pet.pub
+        echo -e "${{ secrets.SADIST_DOT_ENV }}" > .env
 
-    # Runs docker-compose build
-    - uses: ./.github/actions/run-build
-      with:
-        env: staging
+    - name: Set up terraform CLI
+      uses: hashicorp/setup-terraform@v3
+
+    # Runs terraform
+    - name: Terraform init, plan and apply
+      run: |
+        set -x
+        terraform init
+        terraform apply -auto-approve -var='image_list=${{ github.event.inputs.image_list || '[]' }}' -var='env=staging'
