@@ -15,87 +15,39 @@ jobs:
 
     # Environment common for all steps
     env:
-      DOCKER_TLS_VERIFY: 1
-      DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
-      DOCKER_MACHINE_NAME: my-handicapped-pet
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out sadist-ci under $GITHUB_WORKSPACE
     - uses: actions/checkout@v2
-      with:
-        ref: develop
-
-    # Checks-out sadist-fe & sadist-be inside sadist-ci
-    - uses: actions/checkout@v2
-      with:
-        repository: ilyaukin/sadist-fe
-        token: ${{ secrets.ACCESS_TOKEN }}
-        path: sadist-fe
-        ref: develop
-    - uses: actions/checkout@v2
-      with:
-        repository: ilyaukin/sadist-be
-        token: ${{ secrets.ACCESS_TOKEN }}
-        path: sadist-be
-        ref: develop
-    - uses: actions/checkout@v2
-      with:
-        repository: ilyaukin/sadist-proxy
-        token: ${{ secrets.ACCESS_TOKEN }}
-        path: sadist-proxy
-        ref: develop
 
     # Sets up docker certificates
-    - uses: ./.github/actions/copy-cert
-      with:
-        ca: ${{ secrets.CA }}
-        client_cert: ${{ secrets.CLIENT_CERT }}
-        client_key: ${{ secrets.CLIENT_KEY }}
-
-    # Shuts down staging
-    - name: Shut down staging
+    - name: Dump secrets
       run: |
-        cd sadist-be
-        export COMPOSE_PROJECT_NAME=staging
-        docker-compose down
-        unset COMPOSE_PROJECT_NAME
-        cd ..
+        echo -e "${{ secrets.AWS_SSH_KEY }}" > aws_my_handicapped_pet
+        echo -e "${{ secrets.AWS_SSH_KEY_PUB }}" > aws_my_handicapped_pet.pub
+        echo -e "${{ secrets.SADIST_DOT_ENV }}" > .env
 
-    # Runs docker-compose build
-    - uses: ./.github/actions/run-build
-      with:
-        env: prod
+    - name: Set up terraform CLI
+      uses: hashicorp/setup-terraform@v3
+
+    # Runs terraform
+    - name: Terraform init, plan and apply
+      run: |
+        set -x
+        terraform init
+        terraform apply -auto-approve -var='env=prod'
 
     # Merges develop to master
-    - uses: ./.github/actions/merge
-      with:
-        from: develop
-        to: master
-        token: ${{ secrets.ACCESS_TOKEN }}
-
-    # Merges develop to master in sadist-be
-    - uses: ./.github/actions/merge
-      with:
-        repo: ilyaukin/sadist-be
-        from: develop
-        to: master
-        token: ${{ secrets.ACCESS_TOKEN }}
-
-    # Merges develop to master in sadist-fe
-    - uses: ./.github/actions/merge
-      with:
-        repo: ilyaukin/sadist-fe
-        from: develop
-        to: master
-        token: ${{ secrets.ACCESS_TOKEN }}
-
-    # Merges develop to master in sadist-proxy
-    - uses: ./.github/actions/merge
-      with:
-        repo: ilyaukin/sadist-proxy
-        from: develop
-        to: master
-        token: ${{ secrets.ACCESS_TOKEN }}
-
+    - name: Merge to master
+      run: |
+        set -x
+        for repo in sadist-be sadist-blog sadist-ci sadist-fe sadist-proxy; do
+          ./bin/git-clone.sh ilyaukin/$repo
+          ./bin/git-merge.sh $repo develop master
+        done

@@ -1,22 +1,57 @@
 version: '3'
 services:
 
-  deploy:
-    image: deploy
-    build:
-      context: .
-      dockerfile: Dockerfile-deploy
-    working_dir: "/build"
-    command:
-      - "/build/deploy.sh"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+  flask:
+    image: myhandicappedpet/webapp-flask
+    restart: unless-stopped
     environment:
-      - CA
-      - CLIENT_CERT
-      - CLIENT_KEY
-      - DOCKER_TLS_VERIFY
-      - DOCKER_HOST
-      - DOCKER_MACHINE_NAME
       - DATABASE_URL
+
+  nginx:
+    image: myhandicappedpet/webapp-nginx
+    restart: unless-stopped
+    depends_on:
+      - flask
+      - proxy
+
+  proxy:
+    image: myhandicappedpet/webapp-proxy
+    restart: unless-stopped
+    environment:
       - ENV
+
+  chrome1:
+    image: alpeware/chrome-headless-trunk
+    restart: unless-stopped
+    volumes:
+      - chromedata:/data
+
+  blog-app:
+    image: myhandicappedpet/blog-app
+    restart: unless-stopped
+    env_file: ".env"
+    volumes:
+      - uploads:${UPLOAD_FOLDER}
+
+  blog-admin-app:
+    image: myhandicappedpet/blog-admin-app
+    restart: unless-stopped
+    env_file: ".env"
+    volumes:
+      - uploads:${UPLOAD_FOLDER}
+
+  mysql:
+    image: "mysql:8.0.33"
+    restart: unless-stopped
+    command: "--default-authentication-plugin=mysql_native_password"
+    env_file: ".env"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      - "MYSQL_ROOT_PASSWORD=${DB_PASSWORD}"
+      - "MYSQL_DATABASE=${DB_NAME}"
+
+volumes:
+  chromedata:
+  uploads:
+  mysql-data:
