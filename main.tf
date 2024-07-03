@@ -199,7 +199,7 @@ resource "null_resource" "docker-compose-up" {
   }
 
   provisioner "local-exec" {
-    command = "mkdir -p ~/.ssh/ && cp ${var.cert_path}/aws_my_handicapped_pet* ~/.ssh/"
+    command = "ssh-add -h ec2-user@${aws_instance.my-handicapped-instance.public_dns} ${var.cert_path}/aws_my_handicapped_pet"
   }
 
   provisioner "local-exec" {
