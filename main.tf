@@ -199,11 +199,7 @@ resource "null_resource" "docker-compose-up" {
   }
 
   provisioner "local-exec" {
-    command = "ssh-add -h ec2-user@${aws_instance.my-handicapped-instance.public_dns} ${var.cert_path}/aws_my_handicapped_pet"
-  }
-
-  provisioner "local-exec" {
-    command = "./bin/deploy.sh"
+    command = "./bin/deploy.sh ${aws_instance.my-handicapped-instance.public_dns}"
 
     environment = {
       ENV         = var.env
