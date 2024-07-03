@@ -94,6 +94,15 @@ resource "aws_security_group" "my-handicapped-security-group" {
     cidr_blocks = ["186.4.53.135/32"]
   }
 
+  # PuPI
+  ingress {
+    protocol         = "tcp"
+    from_port        = 3141
+    to_port          = 3141
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
   egress {
     protocol         = "-1"
     from_port        = 0
