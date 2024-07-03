@@ -199,7 +199,7 @@ resource "null_resource" "docker-compose-up" {
   }
 
   provisioner "local-exec" {
-    command = "cp ${var.cert_path}/aws_my_handicapped_pet* ~/.ssh/"
+    command = "mkdir -p ~/.ssh/ && cp ${var.cert_path}/aws_my_handicapped_pet* ~/.ssh/"
   }
 
   provisioner "local-exec" {
