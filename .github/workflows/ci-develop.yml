@@ -33,6 +33,9 @@ jobs:
     steps:
     # Checks-out sadist-ci under $GITHUB_WORKSPACE
     - uses: actions/checkout@v2
+      with:
+        repository: ilyaukin/sadist-ci
+        token: ${{ secrets.ACCESS_TOKEN }}
 
     # Sets up docker certificates
     - name: Dump secrets
