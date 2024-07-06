@@ -52,4 +52,4 @@ jobs:
       run: |
         set -x
         terraform init
-        terraform apply -auto-approve -var='image_list=${{ github.event.inputs.image_list || '[]' }}' -var='env=staging'
+        terraform apply -auto-approve -var='image_list=${{ inputs.image_list || '[]' }}' -var='env=staging'
