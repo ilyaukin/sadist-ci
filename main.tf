@@ -207,3 +207,10 @@ resource "null_resource" "docker-compose-up" {
     }
   }
 }
+
+# elastic IP (afterit's created, manually update Route 53 zone records.
+# seems a little bit complicated to write configuration for this.)
+resource "aws_eip" "my-handicapped-elastic-ip" {
+  instance = aws_instance.my-handicapped-instance.id
+  domain   = "vpc"
+}
