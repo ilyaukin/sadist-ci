@@ -2,6 +2,16 @@
 
 set -x
 
+#check environment
+if [ -z $ENV ]; then
+  echo "Environment (\$ENV) must be set" >&2
+  exit 1
+fi
+if [ -z $DATABASE_URL ]; then
+  echo "Database connection string (\$DATABASE_URL) must be set" >&2
+  exit 1
+fi 
+
 #parameters
 host=$1
 key=aws_my_handicapped_pet
@@ -29,8 +39,7 @@ ssh-add ~/.ssh/$key
 ssh -l ec2-user $host docker system dial-stdio
 
 
-docker run -i -e DATABASE_URL myhandicappedpet/webapp-flask python -m scripts.apply_migrations
-
 export COMPOSE_PROJECT_NAME=$ENV
 docker compose -f docker-compose.yml -f docker-compose."$ENV".yml pull
+docker run -i -e DATABASE_URL myhandicappedpet/webapp-flask python -m scripts.apply_migrations
 docker compose -f docker-compose.yml -f docker-compose."$ENV".yml up -d --force-recreate
